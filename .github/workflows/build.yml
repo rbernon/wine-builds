@@ -1,8 +1,6 @@
 name: build
 on:
   push:
-  schedule:
-    - cron: '30 3 * * *'
 
 jobs:
   build-linux:

@@ -117,6 +117,9 @@ esac
 
 pulseaudio --start --exit-idle-time=-1
 
+LD_DEBUG=libs strace -e trace=execve $WINE wineboot
+wineserver -kw
+
 $WINE reg add "HKCU\\Software\\Wine\\Drivers" /v "Graphics" /d "$DRIVER" /f
 $WINE reg add "HKCU\\Software\\Wine\\Direct3D" /v "Renderer" /d "$RENDERER" /f
 $WINE reg add "HKCU\\Software\\Wine\\WineDbg" /v "ShowCrashDialog" /t REG_DWORD /d 0 /f
