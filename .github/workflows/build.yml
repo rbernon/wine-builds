@@ -6,7 +6,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     container:
-      image: rbernon/wine:experimental
+      image: ghcr.io/rbernon/wine:latest
       options: --user root
     strategy:
       matrix:
