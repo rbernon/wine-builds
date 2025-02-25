@@ -14,7 +14,7 @@ export CCACHE_BASEDIR="$PWD/wine"
 export CCACHE_COMPILERCHECK="none"
 export CCACHE_DIR="$PWD/.ccache"
 
-git clone https://gitlab.winehq.org/wine/wine.git
+git clone https://github.com/rbernon/wine
 git -C wine apply $PWD/patches/*.patch
 
 rm build -rf; mkdir -p build
