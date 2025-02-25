@@ -3,9 +3,9 @@
 set -Eeux
 
 case $1 in
-    arm64) export CONFIGURE_ARGS="--enable-win64 --enable-archs=i386,x86_64,arm64ec,aarch64 \"CC=clang -target aarch64-linux-gnu\" --with-mingw=clang";;
-    win64) export CONFIGURE_ARGS="--enable-win64 --enable-archs=i386,x86_64";;
-    win32) export CONFIGURE_ARGS="";;
+    arm64) export CONFIGURE_ARGS=(--enable-win64 --enable-archs=i386,x86_64,arm64ec,aarch64 "CC=clang -target aarch64-linux-gnu" --with-mingw=clang);;
+    win64) export CONFIGURE_ARGS=(--enable-win64 --enable-archs=i386,x86_64);;
+    win32) export CONFIGURE_ARGS=();;
 esac
 
 export MAKE="make -s -j8"
@@ -19,7 +19,7 @@ git clone https://github.com/rbernon/wine
 git -C wine apply $PWD/patches/*.patch
 
 rm build -rf; mkdir -p build
-env -C build ../wine/configure -q CROSSDEBUG=split --with-mingw $CONFIGURE_ARGS
+env -C build ../wine/configure -q CROSSDEBUG=split --with-mingw "${CONFIGURE_ARGS[@]}" || (mkdir -p usr/local/share/wine/ && cp build/config.log usr/local/share/wine/ && fail)
 $MAKE -C build
 
 $MAKE -C build DESTDIR=$PWD install-lib install-test
