@@ -3,6 +3,7 @@
 set -Eeux
 
 case $1 in
+    arm64) export CONFIGURE_ARGS="--enable-win64 --enable-archs=i386,x86_64,arm64ec,aarch64 \"CC=clang -target aarch64-linux-gnu\" --with-mingw=clang";;
     win64) export CONFIGURE_ARGS="--enable-win64 --enable-archs=i386,x86_64";;
     win32) export CONFIGURE_ARGS="";;
 esac

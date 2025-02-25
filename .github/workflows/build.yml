@@ -6,11 +6,11 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     container:
-      image: rbernon/winehq:stable
+      image: rbernon/wine:experimental
       options: --user root
     strategy:
       matrix:
-        arch: [win32, win64]
+        arch: [arm64]
 
     steps:
       - name: Checkout
@@ -179,6 +179,7 @@ jobs:
           path: m1ros2-*.report
 
   test-windows-2019:
+    if: false
     needs: [build-linux]
     runs-on: windows-2019
     strategy:
@@ -205,6 +206,7 @@ jobs:
           path: "*.report"
 
   clean:
+    if: false
     needs: [test-windows-2019]
     runs-on: ubuntu-latest
     steps:
