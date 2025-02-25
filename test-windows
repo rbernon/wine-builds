@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -Eeux
+
+WDIR=$1
+ARCH=$2
+TEST=$3
+EVENT=$4
+
+case $ARCH in
+  win32) cp $WDIR/local/lib/wine/i386-windows/winetest.exe winetest.exe;;
+  wow64) cp $WDIR/local/lib/wine/i386-windows/winetest.exe winetest.exe;;
+  win64) cp $WDIR/local/lib/wine/x86_64-windows/winetest.exe winetest.exe;;
+esac
+
+INFO="Windows Server 2019"
+# . /etc/os-release
+# INFO="Docker running $PRETTY_NAME / $(uname -a), "
+# INFO="$INFO[CPU:$(nproc)*$(lscpu|grep "Model name:"|cut -d: -f2-|xargs echo)"
+# INFO="$INFO RAM:$(grep "MemTotal:" /proc/meminfo|cut -d: -f2-|tr -d ' ') display:dummy"
+# INFO="$INFO]"
+
+# reg add "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AeDebug" /v "Auto" /t REG_DWORD /d 1 /f
+./winetest.exe -q -o $TEST-$ARCH.report -t rbernon-$TEST-$ARCH -i "$INFO" \
+  -m "Rémi Bernon <rbernon@codeweavers.com>" ||:
+
+case $EVENT in
+  push) echo curl 'https://test.winehq.org/submit' -X POST -F reportfile=@$TEST-$ARCH.report -F submit="Upload File";;
+  *) curl 'https://test.winehq.org/submit' -X POST -F reportfile=@$TEST-$ARCH.report -F submit="Upload File" ||:;;
+esac

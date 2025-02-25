@@ -1,8 +1,6 @@
 name: build
 on:
   push:
-  schedule:
-    - cron: '30 3 * * *'
 
 jobs:
   build-linux:
@@ -38,6 +36,7 @@ jobs:
           path: usr
 
   test-linux:
+    if: false
     needs: [build-linux]
     runs-on: ubuntu-latest
     container:
@@ -82,6 +81,7 @@ jobs:
           path: /home/github/*.report
 
   build-macos:
+    if: false
     runs-on: macos-13
     strategy:
       matrix:
@@ -111,6 +111,7 @@ jobs:
           path: usr
 
   test-macos:
+    if: false
     needs: [build-macos]
     runs-on: macos-13
     strategy:
@@ -142,6 +143,7 @@ jobs:
           path: macos-*.report
 
   test-macos-m1ros2:
+    if: false
     needs: [build-macos]
     runs-on: macos-14
     strategy:
@@ -176,8 +178,34 @@ jobs:
           name: test-macos-${{ matrix.test }}-${{ matrix.arch }}.report
           path: m1ros2-*.report
 
+  test-windows-2019:
+    needs: [build-linux]
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        arch: [win64, win32]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download
+        uses: actions/download-artifact@v4
+        with:
+          name: build-linux-${{ matrix.arch }}
+
+      - name: Test
+        run: |
+          bash $PWD/test-windows $PWD ${{ matrix.arch }} w2019 ${{ github.event_name }}
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-windows-${{ matrix.arch }}.report
+          path: "*.report"
+
   clean:
-    needs: [test-linux, test-macos, test-macos-m1ros2]
+    needs: [test-windows-2019]
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup
